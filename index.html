@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DJ Ivan | O Grave que Domina o Agro</title>
+    
+    <!-- Fontes do Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800;900&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Ícones FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS Externo -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Partículas e Luzes de Fundo -->
+    <canvas id="particles"></canvas>
+    <div class="smoke-bg"></div>
+
+    <!-- Tela de Carregamento (Loading Screen) -->
+    <div class="loader" id="loader">
+        <div class="loader-vinyl"></div>
+        <div class="loader-text">CARREGANDO O GRAVE...</div>
+    </div>
+
+    <!-- Cursor Customizado -->
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-ring" id="cursor-ring"></div>
+
+    <!-- Lightbox da Galeria -->
+    <div class="lightbox" id="lightbox">
+        <i class="fas fa-times lightbox-close" id="lightbox-close"></i>
+        <img src="" id="lightbox-img" alt="Visualização ampliada">
+    </div>
+
+    <!-- Cabeçalho / Navegação -->
+    <header>
+    <div class="logo">
+        <span class="dj-text">DJ</span>
+        <span class="ivan-text">IVAN</span>
+    </div>
+    
+    <nav id="nav">
+        <ul id="nav-menu">
+            <li><a href="#" class="interactable">Início</a></li>
+            <li><a href="#hits" class="interactable">Hits</a></li>
+            <li><a href="#sobre" class="interactable">Sobre</a></li>
+            <li><a href="#servicos" class="interactable">Serviços</a></li>
+            <li><a href="#contato" class="interactable">Contato</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hamburger -->
+    <button class="hamburger" id="hamburger" aria-label="Abrir menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+</header>
+
+    <!-- 1. Tela Inicial (Hero Section) -->
+    <section class="hero">
+        <div class="hero-content">
+            <span class="tag">♦ PREMIUM TOUR ♦</span>
+            <h1>DJ <span class="highlight">IVAN</span></h1>
+            <h3>O grave que domina o agro.</h3>
+            <p>A maior e mais impactante fusão entre a energia da música eletrônica e o universo sertanejo.</p>
+            <div class="hero-btns">
+                <a href="#hits" class="btn btn-green interactable btn-sound"><i class="fas fa-play"></i> Ouvir Agora</a>
+                <a href="#contato" class="btn btn-outline-gold interactable btn-sound"><i class="fas fa-calendar-check"></i>Contratar Serviço</a>
+            </div>
+        </div>
+        
+        <div class="hero-visual">
+            <img src="img/DJ_IVAN.png" alt="Logo DJ Ivan" class="hero-logo">
+        </div>
+    </section>
+
+    <!-- 2. Player de Músicas (Hits do DJ) -->
+    <section id="hits" class="hits-section">
+        <div class="section-header">
+            <span class="tag">♫ TRACKS</span>
+            <h2>Hits do <span>DJ</span></h2>
+            <p>Sinta a pressão dos graves e o drop do agronejo</p>
+        </div>
+
+        <div class="player-container">
+            <!-- Player Ativo Superior (Estilo Premium) -->
+            <div class="main-player glass-card">
+                <div class="player-left">
+                    <div class="mini-vinyl-playing" id="mini-vinyl"></div>
+                    <div class="current-track-meta">
+                        <h4 id="current-title">Selecione uma faixa</h4>
+                        <p id="current-artist">DJ Ivan</p>
+                    </div>
+                </div>
+                
+                <div class="player-center">
+                    <div class="player-controls">
+                        <button id="prev-btn" class="control-btn interactable btn-sound"><i class="fas fa-step-backward"></i></button>
+                        <button id="play-pause-btn" class="control-btn play-main interactable btn-sound"><i class="fas fa-play"></i></button>
+                        <button id="next-btn" class="control-btn interactable btn-sound"><i class="fas fa-step-forward"></i></button>
+                        <button id="fullscreen-btn" class="control-btn interactable btn-sound" title="Tela Cheia"><i class="fas fa-expand"></i></button>
+                    </div>
+                    <div class="progress-area" id="progress-container">
+                        <span id="current-time">0:00</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                        <span id="total-duration">0:00</span>
+                    </div>
+                </div>
+
+                <div class="player-right">
+                    <i class="fas fa-volume-up" id="volume-icon"></i>
+                    <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="0.7" class="interactable">
+                </div>
+            </div>
+
+            <!-- Lista de Cards Modernos (Glassmorphism) -->
+            <div class="track-list">
+                <div class="track-item glass-card interactable" data-src="audio/audio1.mp3" data-title="Batidão da Roça" data-duration="2:44">
+                    <div class="track-num-box">01</div>
+                    <div class="track-cover c1"></div>
+                    <div class="track-details">
+                        <h5>Batidão da Roça</h5>
+                        <p>Remix Oficial • DJ Ivan</p>
+                    </div>
+                    <div class="track-time">2:44</div>
+                    <button class="btn-track-play">OUVIR</button>
+                </div>
+
+                <div class="track-item glass-card interactable" data-src="audio/audio2.mp3" data-title="Apaixona Muita Gente" data-duration="2:39">
+                    <div class="track-num-box">02</div>
+                    <div class="track-cover c2"></div>
+                    <div class="track-details">
+                        <h5>Apaixona Muita Gente</h5>
+                        <p>Original Mix • DJ Ivan</p>
+                    </div>
+                    <div class="track-time">2:39</div>
+                    <button class="btn-track-play">OUVIR</button>
+                </div>
+
+                <div class="track-item glass-card interactable" data-src="audio/audio3.mp3" data-title="Anestesiado" data-duration="2:52">
+                    <div class="track-num-box">03</div>
+                    <div class="track-cover c3"></div>
+                    <div class="track-details">
+                        <h5>Anastesiado</h5>
+                        <p>Remix Edit • DJ Ivan</p>
+                    </div>
+                    <div class="track-time">2:52</div>
+                    <button class="btn-track-play">OUVIR</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Seção Sobre -->
+    <section id="sobre" class="sobre-section">
+    <div class="sobre-grid">
+        <div class="sobre-visual-box">
+            
+            <!-- Imagem adicionada aqui -->
+            <div class="sobre-img">
+                <img src="img/DJ.png" alt="Foto do DJ Ivan na estrada">
+            </div>
+            
+            <div class="experience-badge">
+                <h3>+5</h3>
+                <p>ANOS DE ESTRADA</p>
+            </div>
+        </div>
+            
+            <div class="sobre-text-box">
+                <span class="tag">♦ SOBRE O DJ ♦</span>
+                <h2>paixão que vem do <span>CAMPO</span></h2>
+                <p>Nascido e criado no interior de Luiziana-SP, DJ Ivan carrega em sua essência a mistura perfeita entre o agro, o sertanejo e a música eletrônica.</p>
+                <p>Com muita energia e personalidade, seu som é feito para agitar multidões e transformar cada evento em uma experiência inesquecível.</p>
+                
+                <div class="stats-container">
+                    <div class="stat-item glass-card">
+                        <h4>+250</h4>
+                        <p>Vinhetas produzidas</p>
+                    </div>
+                    <div class="stat-item glass-card">
+                        <h4>18</h4>
+                        <p>repertórios Criados</p>
+                    </div>
+                    <div class="stat-item glass-card">
+                        <h4>100%</h4>
+                        <p>Materias Exclusivos</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Galeria de Shows (Efeito Lightbox) -->
+    <section id="servicos" class="galeria-section">
+    <div class="section-header">
+        <span class="tag">♦ MEUS SERVIÇOS ♦</span>
+        <h2>PRODUÇÕES & <span>SERVIÇOS</span></h2>
+        <p>Vinhetas, repertórios exclusivos para pen drive e produções sob medida</p>
+    </div>
+
+    <div class="galeria-grid">
+        <div class="galeria-item glass-card interactable">
+            <img src="img/VINHETA.png" alt="Produção de Vinhetas">
+            <div class="galeria-overlay"><i class="fas fa-search-plus"></i></div>
+        </div>
+
+        <div class="galeria-item glass-card interactable">
+            <img src="img/COPA DO MUNDO.png" alt="Repertório para Pen Drive Copa do Mundo">
+            <div class="galeria-overlay"><i class="fas fa-search-plus"></i></div>
+        </div>
+
+        <div class="galeria-item glass-card interactable">
+            <img src="img/Produção Musical.png" alt="Produção Musical">
+            <div class="galeria-overlay"><i class="fas fa-search-plus"></i></div>
+        </div>
+        
+        <div class="galeria-item glass-card interactable">
+            <img src="img/REMIXES.png" alt="Remixes Exclusivos">
+            <div class="galeria-overlay"><i class="fas fa-search-plus"></i></div>
+        </div>
+    </div>
+</section>
+
+       <!--  Redes Sociais e Área de Contratação -->
+    <section id="contato" class="contato-section">
+        <div class="section-header">
+            <span class="tag">✉ BOOKING</span>
+            <h2>Leve o <span>Grave</span> para seu Evento</h2>
+            <p>Solicite orçamento para rodeios, baladas e eventos</p>
+        </div>
+
+        <div class="contato-container">
+            <!-- Formulário Elegante -->
+            <div class="form-wrapper glass-card">
+                <form id="booking-form" onsubmit="event.preventDefault(); alert('Solicitação enviada com sucesso! Nossa produção entrará em contato.');">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="nome">Nome / Contratante</label>
+                            <input type="text" id="nome" placeholder="Seu nome ou empresa" required class="interactable">
+                        </div>
+                        <div class="form-group">
+                            <label for="telefone">WhatsApp / Telefone</label>
+                            <input type="tel" id="telefone" placeholder="(00) 00000-0000" required class="interactable">
+                        </div>
+                        <div class="form-group">
+                            <label for="cidade">Cidade</label>
+                            <input type="text" id="cidade" placeholder="Ex: Rondonópolis - MT" required class="interactable">
+                        </div>
+                        <div class="form-group">
+                            <label for="tipo">Tipo de Serviço</label>
+                            <select id="tipo" required class="interactable">
+                                <option value="" disabled selected>Escolha o formato</option>
+                                <option value="rodeio">Vinhetas</option>
+                                <option value="balada">Repertório</option>
+                                <option value="festival">Mix exclusivo</option>
+                                <option value="Produção">Produção Musical</option>
+                                <option value="particular">Outro</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="mensagem">Detalhes do projeto</label>
+                            <textarea id="mensagem" rows="4" placeholder="Ex.: Preciso até 20/08" required class="interactable"></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-green w-100 interactable btn-sound">SOLICITAR ORÇAMENTO</button>
+                </form>
+            </div>
+
+            <!-- Redes Sociais e Contato Direto -->
+            <div class="social-wrapper">
+                <h3>Conexão <span>Direta</span></h3>
+                <p>Siga os lançamentos semanais e bastidores nas plataformas oficiais:</p>
+                
+                <div class="social-grid">
+                    <a href="https://www.instagram.com/basilio6216?utm_source=qr&igsh=MXVyODJ1a2VhMXdsbw==" class="social-box instagram interactable" title="Instagram">
+                        <i class="fab fa-instagram"></i>
+                        <span>Instagram</span>
+                    </a>
+
+                    <a href="#" class="social-box spotify interactable" title="Spotify">
+                        <i class="fab fa-spotify"></i>
+                        <span>Spotify</span>
+                    </a>
+                   <div class="social-links">
+    <a href="https://www.facebook.com/share/1PTPDJ1X8y/" class="social-box facebook interactable" title="Facebook" target="_blank" rel="noopener">
+        <i class="fab fa-facebook-f"></i>
+        <span>Facebook</span>
+    </a>
+                </div>
+
+                <div class="wpp-box">
+                    <p>Precisa de um retorno imediato?</p>
+                    <a href="https://wa.me/#" target="_blank" class="btn-wpp interactable btn-sound">
+                        <i class="fab fa-whatsapp"></i> Chamar Produção no WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rodapé -->
+    <footer>
+        <div class="footer-logo">DJ <span>IVAN</span></div>
+        <p>O Grave Que Domina O Agro © 2026. Todos os direitos reservados.</p>
+        <span>Design de Alta Performance Coreográfica LUED </span>
+    </footer>
+
+    <!-- JavaScript Externo -->
+    <script src="script.js"></script>
+</body>
+</html>
