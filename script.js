@@ -6,37 +6,6 @@ window.addEventListener('load', () => {
     }, 1200);
 });
 
-// 2. CURSOR PERSONALIZADO E SUAVE
-const dot = document.getElementById('cursor-dot');
-const ring = document.getElementById('cursor-ring');
-
-document.addEventListener('mousemove', (e) => {
-    dot.style.left = `${e.clientX}px`;
-    dot.style.top = `${e.clientY}px`;
-    
-    // Pequeno atraso intencional para efeito elástico premium
-    setTimeout(() => {
-        ring.style.left = `${e.clientX}px`;
-        ring.style.top = `${e.clientY}px`;
-    }, 40);
-});
-
-// Interações do cursor com elementos clicáveis
-document.querySelectorAll('.interactable').forEach(item => {
-    item.addEventListener('mouseenter', () => {
-        ring.style.width = '50px';
-        ring.style.height = '50px';
-        ring.style.borderColor = '#00ff44';
-        ring.style.backgroundColor = 'rgba(0, 255, 68, 0.05)';
-    });
-    item.addEventListener('mouseleave', () => {
-        ring.style.width = '32px';
-        ring.style.height = '32px';
-        ring.style.borderColor = 'rgba(0, 255, 68, 0.3)';
-        ring.style.backgroundColor = 'transparent';
-    });
-});
-
 // 3. EFEITOS SONOROS NOS BOTÕES (Web Audio API)
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 function playButtonFeedback() {
@@ -138,16 +107,19 @@ lightbox.addEventListener('click', (e) => {
 
 // 6. SISTEMA DO PLAYER DE ÁUDIO & ANIMAÇÕES
 const audio = new Audio();
-const mainVinyl = document.getElementById('main-vinyl');
-const miniVinyl = document.getElementById('mini-vinyl');
+audio.preload = 'auto';
+
+const mainVinyl = document.getElementById('main-vinyl') || document.getElementById('mini-vinyl');
+const miniVinyl = document.getElementById('mini-vinyl') || document.getElementById('main-vinyl');
 const mainEqualizer = document.getElementById('main-equalizer');
 
 const playPauseBtn = document.getElementById('play-pause-btn');
-const playPauseIcon = playPauseBtn.querySelector('i');
+const playPauseIcon = playPauseBtn?.querySelector('i');
 const progressFill = document.getElementById('progress-fill');
 const progressContainer = document.getElementById('progress-container');
 
 const currentTitle = document.getElementById('current-title');
+const currentArtist = document.getElementById('current-artist');
 const currentTrackTime = document.getElementById('current-time');
 const totalDurationText = document.getElementById('total-duration');
 const volumeSlider = document.getElementById('volume-slider');
@@ -155,55 +127,66 @@ const volumeSlider = document.getElementById('volume-slider');
 let trackElements = Array.from(document.querySelectorAll('.track-item'));
 let currentTrackIndex = -1;
 
-function updatePlayerUI(title, duration) {
+function formatTime(seconds) {
+    if (!seconds || Number.isNaN(seconds)) return '0:00';
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+}
+
+function updatePlayerUI(title, artist, duration) {
     currentTitle.textContent = title;
-    totalDurationText.textContent = duration;
+    currentArtist.textContent = artist || 'DJ Ivan';
+    totalDurationText.textContent = duration || '0:00';
     progressFill.style.width = '0%';
+    currentTrackTime.textContent = '0:00';
+}
+
+function setPlayingState(isPlaying) {
+    if (!playPauseIcon) return;
+
+    if (isPlaying) {
+        playPauseIcon.classList.replace('fa-play', 'fa-pause');
+        playPauseBtn.setAttribute('aria-label', 'Pausar');
+        mainVinyl?.classList.add('running');
+        miniVinyl?.classList.add('running');
+        mainEqualizer?.classList.add('active');
+    } else {
+        playPauseIcon.classList.replace('fa-pause', 'fa-play');
+        playPauseBtn.setAttribute('aria-label', 'Reproduzir');
+        mainVinyl?.classList.remove('running');
+        miniVinyl?.classList.remove('running');
+        mainEqualizer?.classList.remove('active');
+    }
 }
 
 function playTrack(index) {
     if (index < 0 || index >= trackElements.length) return;
-    
-    // Remover classes ativas antigas
+
     trackElements.forEach(el => el.classList.remove('playing-now'));
-    
+
     currentTrackIndex = index;
     const targetTrack = trackElements[currentTrackIndex];
     targetTrack.classList.add('playing-now');
-    
+
     const src = targetTrack.getAttribute('data-src');
     const title = targetTrack.getAttribute('data-title');
+    const artist = targetTrack.getAttribute('data-artist') || 'DJ Ivan';
     const duration = targetTrack.getAttribute('data-duration');
-    
+
     audio.src = src;
-    updatePlayerUI(title, duration);
-    
-    audio.play();
-    setPlayingState(true);
+    updatePlayerUI(title, artist, duration);
+
+    audio.play().catch(() => {
+        setPlayingState(false);
+    });
 }
 
-function setPlayingState(isPlaying) {
-    if (isPlaying) {
-        playPauseIcon.classList.replace('fa-play', 'fa-pause');
-        mainVinyl.classList.remove('paused');
-        mainVinyl.classList.add('fast');
-        miniVinyl.classList.add('running');
-        mainEqualizer.classList.add('active');
-    } else {
-        playPauseIcon.classList.replace('fa-pause', 'fa-play');
-        mainVinyl.classList.add('paused');
-        mainVinyl.classList.remove('fast');
-        miniVinyl.classList.remove('running');
-        mainEqualizer.classList.remove('active');
-    }
-}
-
-// Configuração dos clicks nas tracks da lista
 trackElements.forEach((track, index) => {
     track.addEventListener('click', () => {
         if (currentTrackIndex === index) {
             if (audio.paused) {
-                audio.play();
+                audio.play().catch(() => setPlayingState(false));
                 setPlayingState(true);
             } else {
                 audio.pause();
@@ -215,53 +198,48 @@ trackElements.forEach((track, index) => {
     });
 });
 
-// Play / Pause Geral do Player Ativo
-playPauseBtn.addEventListener('click', (e) => {
+playPauseBtn?.addEventListener('click', (e) => {
     e.stopPropagation();
     if (currentTrackIndex === -1) {
-        // Se nenhuma música estiver carregada, toca a primeira
         playTrack(0);
+    } else if (audio.paused) {
+        audio.play().catch(() => setPlayingState(false));
+        setPlayingState(true);
     } else {
-        if (audio.paused) {
-            audio.play();
-            setPlayingState(true);
-        } else {
-            audio.pause();
-            setPlayingState(false);
-        }
+        audio.pause();
+        setPlayingState(false);
     }
 });
 
-// Controles de Próximo e Anterior
-document.getElementById('next-btn').addEventListener('click', (e) => {
+document.getElementById('next-btn')?.addEventListener('click', (e) => {
     e.stopPropagation();
     let nextIndex = currentTrackIndex + 1;
     if (nextIndex >= trackElements.length) nextIndex = 0;
     playTrack(nextIndex);
 });
 
-document.getElementById('prev-btn').addEventListener('click', (e) => {
+document.getElementById('prev-btn')?.addEventListener('click', (e) => {
     e.stopPropagation();
     let prevIndex = currentTrackIndex - 1;
     if (prevIndex < 0) prevIndex = trackElements.length - 1;
     playTrack(prevIndex);
 });
 
-// Atualização de tempo e progresso
 audio.addEventListener('timeupdate', () => {
     if (!audio.duration) return;
     const percent = (audio.currentTime / audio.duration) * 100;
     progressFill.style.width = `${percent}%`;
-    
-    // Formatar minutos e segundos atuais
-    let mins = Math.floor(audio.currentTime / 60);
-    let secs = Math.floor(audio.currentTime % 60);
-    if (secs < 10) secs = '0' + secs;
-    currentTrackTime.textContent = `${mins}:${secs}`;
+    currentTrackTime.textContent = formatTime(audio.currentTime);
 });
 
-// Evento de clique na barra para avançar/retroceder áudio
-progressContainer.addEventListener('click', (e) => {
+audio.addEventListener('loadedmetadata', () => {
+    totalDurationText.textContent = formatTime(audio.duration);
+});
+
+audio.addEventListener('play', () => setPlayingState(true));
+audio.addEventListener('pause', () => setPlayingState(false));
+
+progressContainer?.addEventListener('click', (e) => {
     if (!audio.duration) return;
     const rect = progressContainer.getBoundingClientRect();
     const clickX = e.clientX - rect.left;
@@ -269,12 +247,10 @@ progressContainer.addEventListener('click', (e) => {
     audio.currentTime = (clickX / width) * audio.duration;
 });
 
-// Controle de Volume
-volumeSlider.addEventListener('input', (e) => {
+volumeSlider?.addEventListener('input', (e) => {
     audio.volume = e.target.value;
 });
 
-// Reset ao terminar faixa
 audio.addEventListener('ended', () => {
     let nextIndex = currentTrackIndex + 1;
     if (nextIndex < trackElements.length) {
@@ -284,16 +260,16 @@ audio.addEventListener('ended', () => {
     }
 });
 
-// Modo Fullscreen do Player (Extra)
 const fullscreenBtn = document.getElementById('fullscreen-btn');
-fullscreenBtn.addEventListener('click', (e) => {
+fullscreenBtn?.addEventListener('click', (e) => {
     e.stopPropagation();
     const playerBox = document.querySelector('.player-container');
-    playerBox.classList.toggle('fullscreen-mode');
-    if(playerBox.classList.contains('fullscreen-mode')) {
-        fullscreenBtn.querySelector('i').classList.replace('fa-expand', 'fa-compress');
+    playerBox?.classList.toggle('fullscreen-mode');
+    const icon = fullscreenBtn.querySelector('i');
+    if (playerBox?.classList.contains('fullscreen-mode')) {
+        icon.classList.replace('fa-expand', 'fa-compress');
     } else {
-        fullscreenBtn.querySelector('i').classList.replace('fa-compress', 'fa-expand');
+        icon.classList.replace('fa-compress', 'fa-expand');
     }
 });
 
@@ -316,4 +292,35 @@ document.querySelectorAll('#nav-menu a').forEach(link => {
         hamburger.classList.remove('open');
         navMenu.classList.remove('open');
     });
+});
+
+// ===== ENVIO DO FORMULÁRIO PARA WHATSAPP =====
+document.getElementById('booking-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    // Pega os valores
+    const nome = document.getElementById('nome').value.trim();
+    const telefone = document.getElementById('telefone').value.trim();
+    const cidade = document.getElementById('cidade').value.trim();
+    const tipo = document.getElementById('tipo').value;
+    const mensagem = document.getElementById('mensagem').value.trim();
+
+    // Monta a mensagem para o WhatsApp
+    let texto = `🎧 *Nova solicitação de orçamento — DJ IVAN*\n\n`;
+    texto += `👤 *Nome/Contratante:* ${nome}\n`;
+    texto += `📱 *WhatsApp/Telefone:* ${telefone}\n`;
+    texto += `🏙️ *Cidade:* ${cidade}\n`;
+    texto += `🎤 *Tipo de Serviço:* ${tipo}\n`;
+    if (mensagem) texto += `📝 *Detalhes do Projeto:* ${mensagem}\n\n`;
+    texto += `Solicitado pelo site. Aguardo retorno!`;
+
+    // Número do WhatsApp (troque se necessário)
+    const numero = "5518998091498";
+
+    // Abre o WhatsApp
+    const url = `https://wa.me/${5518998091498}?text=${encodeURIComponent(texto)}`;
+    window.open(url, '_blank');
+
+    // Feedback
+    alert('Solicitação enviada! Redirecionando para o WhatsApp...');
 });
