@@ -26,11 +26,8 @@
     <div class="loader" id="loader">
         <div class="loader-vinyl"></div>
         <div class="loader-text">CARREGANDO O GRAVE...</div>
+        <div class="loader-subtext">Preparando o som e a energia</div>
     </div>
-
-    <!-- Cursor Customizado -->
-    <div class="cursor-dot" id="cursor-dot"></div>
-    <div class="cursor-ring" id="cursor-ring"></div>
 
     <!-- Lightbox da Galeria -->
     <div class="lightbox" id="lightbox">
@@ -90,11 +87,13 @@
         </div>
 
         <div class="player-container">
-            <!-- Player Ativo Superior (Estilo Premium) -->
             <div class="main-player glass-card">
                 <div class="player-left">
-                    <div class="mini-vinyl-playing" id="mini-vinyl"></div>
+                    <div class="vinyl-wrap">
+                        <div class="mini-vinyl-playing" id="main-vinyl"></div>
+                    </div>
                     <div class="current-track-meta">
+                        <span class="now-playing-pill">Tocando agora</span>
                         <h4 id="current-title">Selecione uma faixa</h4>
                         <p id="current-artist">DJ Ivan</p>
                     </div>
@@ -102,10 +101,17 @@
                 
                 <div class="player-center">
                     <div class="player-controls">
-                        <button id="prev-btn" class="control-btn interactable btn-sound"><i class="fas fa-step-backward"></i></button>
-                        <button id="play-pause-btn" class="control-btn play-main interactable btn-sound"><i class="fas fa-play"></i></button>
-                        <button id="next-btn" class="control-btn interactable btn-sound"><i class="fas fa-step-forward"></i></button>
-                        <button id="fullscreen-btn" class="control-btn interactable btn-sound" title="Tela Cheia"><i class="fas fa-expand"></i></button>
+                        <button id="prev-btn" class="control-btn interactable btn-sound" aria-label="Faixa anterior"><i class="fas fa-step-backward"></i></button>
+                        <button id="play-pause-btn" class="control-btn play-main interactable btn-sound" aria-label="Reproduzir"><i class="fas fa-play"></i></button>
+                        <button id="next-btn" class="control-btn interactable btn-sound" aria-label="Próxima faixa"><i class="fas fa-step-forward"></i></button>
+                        <button id="fullscreen-btn" class="control-btn interactable btn-sound" title="Tela Cheia" aria-label="Tela cheia"><i class="fas fa-expand"></i></button>
+                    </div>
+                    <div class="equalizer-bars" id="main-equalizer" aria-hidden="true">
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                        <span class="bar"></span>
                     </div>
                     <div class="progress-area" id="progress-container">
                         <span id="current-time">0:00</span>
@@ -122,9 +128,8 @@
                 </div>
             </div>
 
-            <!-- Lista de Cards Modernos (Glassmorphism) -->
             <div class="track-list">
-                <div class="track-item glass-card interactable" data-src="audio/audio1.mp3" data-title="Batidão da Roça" data-duration="2:44">
+                <div class="track-item glass-card interactable" data-src="audio/audio1.mp3" data-title="Batidão da Roça" data-artist="DJ Ivan" data-duration="2:44">
                     <div class="track-num-box">01</div>
                     <div class="track-cover c1"></div>
                     <div class="track-details">
@@ -135,7 +140,7 @@
                     <button class="btn-track-play">OUVIR</button>
                 </div>
 
-                <div class="track-item glass-card interactable" data-src="audio/audio2.mp3" data-title="Apaixona Muita Gente" data-duration="2:39">
+                <div class="track-item glass-card interactable" data-src="audio/audio2.mp3" data-title="Apaixona Muita Gente" data-artist="DJ Ivan" data-duration="2:39">
                     <div class="track-num-box">02</div>
                     <div class="track-cover c2"></div>
                     <div class="track-details">
@@ -146,7 +151,7 @@
                     <button class="btn-track-play">OUVIR</button>
                 </div>
 
-                <div class="track-item glass-card interactable" data-src="audio/audio3.mp3" data-title="Anestesiado" data-duration="2:52">
+                <div class="track-item glass-card interactable" data-src="audio/audio3.mp3" data-title="Anestesiado" data-artist="DJ Ivan" data-duration="2:52">
                     <div class="track-num-box">03</div>
                     <div class="track-cover c3"></div>
                     <div class="track-details">
